@@ -1,0 +1,44 @@
+//**** model
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class FeedImage extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'feed_id',
+        'photo'
+    ];
+
+    public function feeds()
+    {
+        return $this->hasMany(FeedImages::class, 'feed_id');
+    }
+
+}
+
+
+
+//**** controller
+
+$files = [];
+        if ($request->hasfile('photo')) {
+            foreach ($request->file('photo') as $key => $file) {
+                $name = time() . rand(1, 100) . '.' . $file->extension();
+                $file->move(public_path('storage/photo'), $name);
+                $files[$key] = $name;
+            }
+        }
+
+        foreach ($request->file('photo') as $key => $file) {
+            $feedImage = new FeedImage();
+            $feedImage->photo = $files[$key];
+            $feedImage->feed_id = $feeds->id;
+            $feedImage->save();
+        }
